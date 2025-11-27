@@ -68,11 +68,11 @@ class Graph:
 
         if bidirectional:
             adj_v = self.adj.search(v)
-            if adj_v is None:
-                adj_v = []
-                self.adj.insert(v, adj_v)
+        if adj_v is None:
+            adj_v = []
+            self.adj.insert(v, adj_v)
 
-            adj_v.append(Edge(v, u, energy, capacity, bidirectional))
+        adj_v.append(Edge(v, u, energy, capacity, bidirectional))
 
     
     # F1: Check reachability from a hub
