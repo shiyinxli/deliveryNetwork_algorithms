@@ -1,6 +1,6 @@
 import json
 import heapq
-from hashmap import CustomHashMap, LinkedList
+from data_structure import CustomHashMap, LinkedList, CustomArray, CustomMinHeap
 
 class Node:
     def __init__(self, node_id, node_type):
@@ -68,11 +68,11 @@ class Graph:
 
         if bidirectional:
             adj_v = self.adj.search(v)
-        if adj_v is None:
-            adj_v = []
-            self.adj.insert(v, adj_v)
+            if adj_v is None:
+                adj_v = []
+                self.adj.insert(v, adj_v)
 
-        adj_v.append(Edge(v, u, energy, capacity, bidirectional))
+            adj_v.append(Edge(v, u, energy, capacity, bidirectional))
 
     
     # F1: Check reachability from a hub
@@ -122,12 +122,13 @@ class Graph:
 
     # F2: Shortest path (Dijkstra using energy)
     def dijkstra(self, start, target):
-        pq = [(0, start, [])]  # (cost, node, path)
+        pq = CustomMinHeap()
+        pq.push(0, (start, []))  # (cost, (current_node, path_so_far))
 
         visited = set()
 
-        while pq:
-            cost, u, path = heapq.heappop(pq)
+        while not pq.is_empty():
+            cost, (u, path) = pq.pop()
             if u in visited:
                 continue
             visited.add(u)
@@ -137,9 +138,12 @@ class Graph:
             if u == target:
                 return cost, path
 
-            for e in self.adj[u]:
-                if e.restricted:
-                    continue
-                heapq.heappush(pq, (cost + e.energy, e.v, path))
+            edges = self.adj.search(u)
+            if edges is None:
+                continue
+
+            for e in edges:
+                if not e.restricted:
+                    pq.push(cost + e.energy, (e.v, path))
 
         return float("inf"), []  # no path
