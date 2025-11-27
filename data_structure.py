@@ -118,6 +118,15 @@ class CustomArray:
 
     def __len__(self):
         return self.size
+    def __getitem__(self, index):
+        if index < 0 or index >= self.size:
+            raise IndexError("Index out of range")
+        return self.buffer[index]
+    
+    def __setitem__(self, index, value):
+        if index < 0 or index >= self.size:
+            raise IndexError("Index out of range")
+        self.buffer[index] = value
 
 
 class CustomMinHeap:
