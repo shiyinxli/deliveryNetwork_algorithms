@@ -1,6 +1,6 @@
 import json
 import heapq
-from hashmap import CustomHashMap
+from hashmap import CustomHashMap, LinkedList
 
 class Node:
     def __init__(self, node_id, node_type):
@@ -9,8 +9,7 @@ class Node:
 
 
 class Edge:
-    def __init__(self, u, v, energy=0, capacity=float("inf"),
-        bidirectional=False, restricted=False):
+    def __init__(self, u, v, energy=0, capacity=float("inf"),bidirectional=False, restricted=False):
         self.u = u
         self.v = v
         self.energy = energy
@@ -24,9 +23,8 @@ class Graph:
         self.nodes = CustomHashMap()              # id → Node
         self.adj = CustomHashMap()                # id → list of Edge
 
-    # --------------------------------------------------------
+
     # B1: Load graph from JSON file
-    # --------------------------------------------------------
     def load_json(self, filepath):
         with open(filepath, "r") as f:
             data = json.load(f)
@@ -45,18 +43,16 @@ class Graph:
                 bidirectional=e.get("bidirectional", False)
             )
 
-    # --------------------------------------------------------
+
     # B2: No-fly zones (restrict edges)
-    # --------------------------------------------------------
     def set_restricted(self, u, v, restricted=True):
         for e in self.adj[u]:
             if e.v == v:
                 e.restricted = restricted
 
 
-    # --------------------------------------------------------
+    
     # B3: Modify & extend network
-    # --------------------------------------------------------
     def add_node(self, node_id, node_type="unknown"):
         if self.nodes.search(node_id) is None:
             self.nodes.insert(node_id, Node(node_id, node_type))
@@ -79,10 +75,9 @@ class Graph:
         adj_v.append(Edge(v, u, energy, capacity, bidirectional))
 
     
-    # --------------------------------------------------------
     # F1: Check reachability from a hub
-    # --------------------------------------------------------
-    def reachable_from(self, start):
+    def check_delivery_reachability(self, start="HUB"):
+    # 1. Run reachability search
         visited = set()
         stack = [start]
 
@@ -92,15 +87,40 @@ class Graph:
                 continue
             visited.add(u)
 
-            for e in self.adj[u]:
+            edges = self.adj.search(u)
+            if edges is None:
+                    continue
+
+            for e in edges:
                 if not e.restricted:
                     stack.append(e.v)
 
-        return visited
+        all_delivery = LinkedList()
+        for (node_id, node_obj) in self.nodes.items():
+            if node_obj.type == "delivery":
+                all_delivery.append(node_id)
 
-    # --------------------------------------------------------
+        
+        unreachable_delivery = LinkedList()
+        current = all_delivery.head
+        while current:
+            did = current.data
+            if did not in visited:
+                unreachable_delivery.append(did)
+            current = current.next
+
+        if unreachable_delivery.head is None:
+            return f"All delivery nodes are reasonable from {start}."
+        
+        names = []
+        current = unreachable_delivery.head
+        while current:
+            names.append(current.data)
+            current = current.next
+
+            return "Unreachable delivery nodes: " + ", ".join(names)
+
     # F2: Shortest path (Dijkstra using energy)
-    # --------------------------------------------------------
     def dijkstra(self, start, target):
         pq = [(0, start, [])]  # (cost, node, path)
 
