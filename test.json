@@ -1,0 +1,62 @@
+{
+    "nodes": [
+        {"id": "S", "type": "distributor"},
+        {"id": "A", "type": "delivery"},
+        {"id": "B", "type": "delivery"},
+        {"id": "C", "type": "delivery"},
+        {"id": "D", "type": "delivery"},
+        {"id": "CHARGE", "type": "charging"}
+    ],
+
+    "edges": [
+    {
+        "from": "S",
+        "to": "A",
+        "energy": 15,
+        "capacity": 10,
+        "bidirectional": false
+    },
+    {
+        "from": "S",
+        "to": "B",
+        "energy": 5,
+        "capacity": 8,
+        "bidirectional": false
+    },
+    {
+        "from": "B",
+        "to": "A",
+        "energy": 4,
+        "capacity": 3,
+        "bidirectional": false
+    },
+    {
+        "from": "A",
+        "to": "C",
+        "energy": 4,
+        "capacity": 5,
+        "bidirectional": false
+    },
+    {
+        "from": "A",
+        "to": "D",
+        "energy": 4,
+        "capacity": 4,
+        "bidirectional": false
+    },
+    {
+        "from": "B",
+        "to": "D",
+        "energy": 4,
+        "capacity": 6,
+        "bidirectional": false
+    },
+    {
+        "from": "D",
+        "to": "C",
+        "energy": 4,
+        "capacity": 3,
+        "bidirectional": false
+    }
+    ]
+}

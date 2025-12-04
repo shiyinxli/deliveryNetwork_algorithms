@@ -147,3 +147,151 @@ class Graph:
                     pq.push(cost + e.energy, (e.v, path))
 
         return float("inf"), []  # no path
+    
+    # F3: calculate max-flow
+    def _ensure_map(self, cmap, key):
+        existing = cmap.search(key)
+        if existing is None:
+            inner = CustomHashMap()
+            cmap.insert(key, inner)
+            return inner
+        return existing
+    
+    def _bfs_flow(self, residual, source, sink):
+        visited = CustomHashMap()
+        parent = CustomHashMap()
+
+        queue = CustomArray()
+        queue.append(source)
+        visited.insert(source, True)
+
+        while len(queue) > 0:
+            u = queue.get(0)
+            for i in range(1, len(queue)):
+                queue.set(i-1, queue.get(i))
+            queue.size -= 1
+            queue.set(queue.size, None)
+
+            neighbors = residual.search(u)
+            if neighbors is None:
+                continue
+
+            for v, cap in neighbors.items():
+                if cap > 0 and visited.search(v) is None:
+                    visited.insert(v, True)
+                    parent.insert(v, u)
+                    queue.append(v)
+                    if v == sink:
+                        return parent
+
+        return None
+
+    def calculate_delivery_capacity(self, start_hub, area_nodes):
+        INF = 10**12  
+
+        residual = CustomHashMap()
+
+        for u, edges in self.adj.items():
+            inner = self._ensure_map(residual, u)
+            for e in edges:
+                if e.restricted:
+                    continue
+                
+                existing = inner.search(e.v)
+                if existing is None:
+                    inner.insert(e.v, e.capacity)
+                else:
+                    inner.insert(e.v, existing + e.capacity)
+                
+                back = self._ensure_map(residual, e.v)
+                if back.search(u) is None:
+                    back.insert(u, 0)
+
+
+        super_sink = "SUPER_SINK"
+        self._ensure_map(residual, super_sink)
+
+        for node in area_nodes:
+            inner = self._ensure_map(residual, node)
+            if inner.search(super_sink) is None:
+                inner.insert(super_sink, INF)
+            back = self._ensure_map(residual, super_sink)
+            if back.search(node) is None:
+                back.insert(node, 0)
+
+        max_flow = 0
+
+
+        while True:
+            parent = self._bfs_flow(residual, start_hub, super_sink)
+            if parent is None:
+                break
+
+
+            flow = INF
+            v = super_sink
+            while parent.search(v) is not None:
+                u = parent.search(v)
+                cap = residual.search(u).search(v)
+                if cap < flow:
+                    flow = cap
+                v = u
+
+            v = super_sink
+            while parent.search(v) is not None:
+                u = parent.search(v)
+                forward_map = residual.search(u)
+                backward_map = residual.search(v)
+
+                forward_cap = forward_map.search(v)
+                backward_cap = backward_map.search(u)
+
+                forward_map.insert(v, forward_cap - flow)
+                backward_map.insert(u, backward_cap + flow)
+
+                v = u
+
+            max_flow += flow
+
+        return max_flow, residual
+    
+    # F4: min-cut
+    def _extract_min_cut(self, residual, source):
+        # BFS to find reachable nodes in residual graph
+        visited = CustomHashMap()
+        queue = CustomArray()
+        queue.append(source)
+        visited.insert(source, True)
+
+        while len(queue) > 0:
+            u = queue.get(0)
+            # pop front manually
+            for i in range(1, len(queue)):
+                queue.set(i-1, queue.get(i))
+            queue.size -= 1
+            queue.set(queue.size, None)
+
+            neighbors = residual.search(u)
+            if neighbors is None:
+                continue
+
+            for v, cap in neighbors.items():
+                if cap > 0 and visited.search(v) is None:
+                    visited.insert(v, True)
+                    queue.append(v)
+
+        # Build cut set
+        cut_edges = CustomArray()
+
+        # All edges from visited → NOT visited in original graph
+        for u, edges in self.adj.items():
+            if visited.search(u) is None:
+                continue
+            for e in edges:
+                v = e.v
+                if visited.search(v) is None:
+                    cut_edges.append((u, v))
+
+        return cut_edges
+
+

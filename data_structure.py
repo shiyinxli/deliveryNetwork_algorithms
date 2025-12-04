@@ -83,7 +83,7 @@ class CustomHashMap:
                 yield (pair[0], pair[1])
 
 class CustomArray:
-    def __init__(self, capacity=16):
+    def __init__(self, capacity=50):
         self.capacity = capacity
         self.size = 0
         self.buffer = [None] * capacity
