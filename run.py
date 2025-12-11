@@ -14,12 +14,17 @@ if __name__ == "__main__":
     # else:
     #     print("No path found from HUB to A1")
     
-    urban_area = ["A", "B", "C", "D"]
-    capacity, residual = graph.calculate_delivery_capacity("S", urban_area)
-    print("Max drones per hour: ", capacity)
-    cut_edges = graph._extract_min_cut(residual, "S")
-    print("Min cut edges:")
-    for i in range(len(cut_edges)):
-        u, v = cut_edges[i]
-        print(f"{u} -> {v}")
+    # urban_area = ["A", "B", "C", "D"]
+    # capacity, residual = graph.calculate_delivery_capacity("S", urban_area)
+    # print("Max drones per hour: ", capacity)
+    # cut_edges = graph._extract_min_cut(residual, "S")
+    # print("Min cut edges:")
+    # for i in range(len(cut_edges)):
+    #     u, v = cut_edges[i]
+    #     print(f"{u} -> {v}")
 
+    mst, cost = graph.prim("S")
+    print(cost)
+
+    for (u, v, cost) in mst.iter():
+        print(u, v, cost)

@@ -22,6 +22,8 @@ class Graph:
     def __init__(self):
         self.nodes = CustomHashMap()              # id → Node
         self.adj = CustomHashMap()                # id → list of Edge
+        self.node_count = 0
+        self.edge_count = 0
 
 
     # B1: Load graph from JSON file
@@ -57,20 +59,15 @@ class Graph:
         if self.nodes.search(node_id) is None:
             self.nodes.insert(node_id, Node(node_id, node_type))
             self.adj.insert(node_id, [])
+            self.node_count += 1
 
     def add_edge(self, u, v, energy=0, capacity=float("inf"), bidirectional=False):
         adj_u = self.adj.search(u)
-        # if adj_u is None:
-        #     adj_u = []
-        # self.adj.insert(u, adj_u)
 
         adj_u.append(Edge(u, v, energy, capacity, bidirectional))
 
         if bidirectional:
             adj_v = self.adj.search(v)
-            # if adj_v is None:
-            #     adj_v = []
-            #     self.adj.insert(v, adj_v)
 
             adj_v.append(Edge(v, u, energy, capacity, bidirectional))
 
@@ -186,7 +183,7 @@ class Graph:
         return None
 
     def calculate_delivery_capacity(self, start_hub, area_nodes):
-        INF = 10**12  
+        INF = 10**12
 
         residual = CustomHashMap()
 
@@ -195,12 +192,7 @@ class Graph:
             for e in edges:
                 if e.restricted:
                     continue
-                
-                # existing = inner.search(e.v)
-                # if existing is None:
-                #     inner.insert(e.v, e.capacity)
-                # else:
-                #     inner.insert(e.v, existing + e.capacity)
+            
                 inner.insert(e.v, e.capacity)
                 
                 back = self._ensure_map(residual, e.v)
@@ -294,4 +286,34 @@ class Graph:
 
         return cut_edges
 
+    #F6: Using prim's algorithm
+    def prim(self, start):
+        min_heap = CustomMinHeap()
+        visited = set()
+        mst = LinkedList()
+        total_cost = 0
 
+        visited.add(start)
+        edges = self.adj.search(start)
+        
+        for e in edges:
+            if not e.restricted:
+                min_heap.push(e.energy, (start, e.v))
+
+        while (not min_heap.is_empty()) and (len(visited) < self.node_count):
+            energy, (u, v) = min_heap.pop()
+
+            if v in visited:
+                continue
+
+            visited.add(v)
+            mst.append((u,v, energy))
+            total_cost += energy
+
+            edges = self.adj.search(v)
+            for e in edges:
+                if not e.restricted and e.v not in visited:
+                    min_heap.push(e.energy, (e.v, e.v))
+
+
+        return mst, total_cost
