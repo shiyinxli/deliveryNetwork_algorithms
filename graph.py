@@ -60,24 +60,23 @@ class Graph:
 
     def add_edge(self, u, v, energy=0, capacity=float("inf"), bidirectional=False):
         adj_u = self.adj.search(u)
-        if adj_u is None:
-            adj_u = []
-        self.adj.insert(u, adj_u)
+        # if adj_u is None:
+        #     adj_u = []
+        # self.adj.insert(u, adj_u)
 
         adj_u.append(Edge(u, v, energy, capacity, bidirectional))
 
         if bidirectional:
             adj_v = self.adj.search(v)
-            if adj_v is None:
-                adj_v = []
-                self.adj.insert(v, adj_v)
+            # if adj_v is None:
+            #     adj_v = []
+            #     self.adj.insert(v, adj_v)
 
             adj_v.append(Edge(v, u, energy, capacity, bidirectional))
 
     
     # F1: Check reachability from a hub
     def check_delivery_reachability(self, start="HUB"):
-    # 1. Run reachability search
         visited = set()
         stack = [start]
 
@@ -112,13 +111,13 @@ class Graph:
         if unreachable_delivery.head is None:
             return f"All delivery nodes are reasonable from {start}."
         
-        names = []
+        names = LinkedList()
         current = unreachable_delivery.head
         while current:
             names.append(current.data)
             current = current.next
 
-            return "Unreachable delivery nodes: " + ", ".join(names)
+        return "Unreachable delivery nodes: " + ", ".join(names)
 
     # F2: Shortest path (Dijkstra using energy)
     def dijkstra(self, start, target):
@@ -197,11 +196,12 @@ class Graph:
                 if e.restricted:
                     continue
                 
-                existing = inner.search(e.v)
-                if existing is None:
-                    inner.insert(e.v, e.capacity)
-                else:
-                    inner.insert(e.v, existing + e.capacity)
+                # existing = inner.search(e.v)
+                # if existing is None:
+                #     inner.insert(e.v, e.capacity)
+                # else:
+                #     inner.insert(e.v, existing + e.capacity)
+                inner.insert(e.v, e.capacity)
                 
                 back = self._ensure_map(residual, e.v)
                 if back.search(u) is None:
