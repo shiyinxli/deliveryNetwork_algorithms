@@ -26,7 +26,7 @@
     {
         "from": "B",
         "to": "A",
-        "energy": 4,
+        "energy": 6,
         "capacity": 3,
         "bidirectional": false
     },
@@ -40,7 +40,7 @@
     {
         "from": "A",
         "to": "D",
-        "energy": 4,
+        "energy": 8,
         "capacity": 4,
         "bidirectional": false
     },
@@ -54,7 +54,28 @@
     {
         "from": "D",
         "to": "C",
-        "energy": 4,
+        "energy": 7,
+        "capacity": 3,
+        "bidirectional": false
+    },
+    {
+        "from": "D",
+        "to": "CHARGE",
+        "energy": 7,
+        "capacity": 3,
+        "bidirectional": false
+    },
+    {
+        "from": "A",
+        "to": "CHARGE",
+        "energy": 2,
+        "capacity": 3,
+        "bidirectional": true
+    },
+    {
+        "from": "CHARGE",
+        "to": "C",
+        "energy": 1,
         "capacity": 3,
         "bidirectional": false
     }

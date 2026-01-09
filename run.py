@@ -23,8 +23,13 @@ if __name__ == "__main__":
     #     u, v = cut_edges[i]
     #     print(f"{u} -> {v}")
 
-    mst, cost = graph.prim("S")
-    print(cost)
+    # mst, cost = graph.prim("S")
+    # print(cost)
 
-    for (u, v, cost) in mst.iter():
-        print(u, v, cost)
+    # for (u, v, cost) in mst.iter():
+    #     print(u, v, cost)
+    
+    stations = graph.optimize_charging_station_placement(k = 2, R = 5)
+    for i in range(len(stations)):
+        u = stations[i]
+        print(f"{u}")
