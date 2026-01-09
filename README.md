@@ -1,11 +1,11 @@
 # Algorithms and Data Structures Project Report
 
-Team members: Jou-Pei Fang (Matr. No. 2285577\)  
-		       Shiyin Li (Matr. No. 2280709\)
+Team members: Jou-Pei Fang (Matr. No. 2285577\)
+		          Shiyin Li (Matr. No. 2280709\)
 
-[**1\. Introduction	1**](#introduction)
+[1\. Introduction	1](#introduction)
 
-[**2\. Data Structure Prerequisite	1**](#data-structure-prerequisite)
+[2\. Data Structure Prerequisite	1](#data-structure-prerequisite)
 
 [2.1 list	1](#2.1-list)
 
@@ -31,7 +31,7 @@ Team members: Jou-Pei Fang (Matr. No. 2285577\)
 
 [2.3.3 Complexity	5](#2.3.3-complexity)
 
-[**3\. Functionality of the tool	5**](#functionality-of-the-tool)
+[3\. Functionality of the tool	5](#functionality-of-the-tool)
 
 [3.1 B1: Import and visualize the drone network	5](#3.1-b1:-import-and-visualize-the-drone-network)
 
@@ -51,23 +51,20 @@ Team members: Jou-Pei Fang (Matr. No. 2285577\)
 
 [3.9 F6: Set up a communications infrastructure for drones	17](#3.9-f6:-set-up-a-communications-infrastructure-for-drones)
 
-1. # **Introduction** {#introduction}
+1. # Introduction {#introduction}
 
-This module defines the graph structure used in the drone delivery project.  
-It models the delivery network as a directed graph, where each node represents  
-a location (hub, charging station or delivery point) and each edge represents a  
-possible flight corridor between locations.
+This module defines the graph structure used in the drone delivery project. It models the delivery network as a directed graph, where each node represents
+a location (hub, charging station or delivery point) and each edge represents a possible flight corridor between locations.
 
-The graph not only stores connectivity, but also operational information such as  
-energy cost, capacity and whether a corridor is restricted. These properties are later used by algorithms for routing, reachability analysis and constraint handling.
+The graph not only stores connectivity, but also operational information such as energy cost, capacity and whether a corridor is restricted. These properties are later used by algorithms for routing, reachability analysis and constraint handling.
 
-2. # **Data Structure Prerequisite** {#data-structure-prerequisite}
+2. # Data Structure Prerequisite {#data-structure-prerequisite}
 
-## **2.1 list** {#2.1-list}
+## 2.1 list {#2.1-list}
 
 In theory, a list is just an ordered collection. There are two main physical representations: 1\. Linked list; 2\. Array-based list (Python built-in list or CustomArray in our code).
 
-### **2.1.1 LinkedList** {#2.1.1-linkedlist}
+### 2.1.1 LinkedList {#2.1.1-linkedlist}
 
 To realize the structure of LinkedList, we first define the class Node, where next is the pointer to the next node.
 
@@ -77,12 +74,12 @@ To realize the structure of LinkedList, we first define the class Node, where ne
 In our class LinkedList, we have four functions: append, find, remove and iter. The key idea of the Linkedlist is non-contiguous memory, that each node contains the pointer to the next node.  
 The advantage of LinkedList, contrast to an Array-based list is O(1) insertion/deletion; no resizing or shifting; flexible memory usage. The disadvantage of it is that it doesn’t have an index, so O(n) access(must traverse); extra memory for pointers.
 
-### **2.1.2 Array-based list (CustomArray)** {#2.1.2-array-based-list-(customarray)}
+### 2.1.2 Array-based list (CustomArray) {#2.1.2-array-based-list-(customarray)}
 
 Key idea of array is contiguous memory, each element is stored contiguously in memory, which enables indexing work. For example, when we want to do x \= arr\[i\], python computes address \= base\_address \+ i \* sizeof (pointer) , so indexing is O(1) time.  
 The advantages of array-based lists are O(1) random access; cache friendly, very fast in practice; less memory overhead (no pointers). The disadvantage of it is that when inserting or deleting in the middle, the complexity is O(n); it needs resizing (copying).
 
-### **2.1.3 Complexity** {#2.1.3-complexity}
+### 2.1.3 Complexity {#2.1.3-complexity}
 
 | Operation | LinkedList | CustomArray |
 | :---- | :---: | :---: |
@@ -95,9 +92,9 @@ The advantages of array-based lists are O(1) random access; cache friendly, very
 | Delete by value | O(n) | O(n) |
 | Pop last element | O(n) | O(1) |
 
-## **2.2 Hash Map** {#2.2-hash-map}
+## 2.2 Hash Map {#2.2-hash-map}
 
-### **2.2.1 Necessity**  {#2.2.1-necessity}
+### 2.2.1 Necessity  {#2.2.1-necessity}
 
 A hash map is necessary to provide O(1) average-time access from a node ID to its associated data (node object or adjacency list). Without a hash map, basic graph operations would degrade to O(n), making algorithms like DFS, Dijkstra, and Max-Flow inefficient. In our code, search value by the key is constantly used, like edges \= self.adj.search(u) , is appeared in Dijkstra and so on.  
 In our Graph class, we need to solve two mapping problems, node\_id to Node object and node\_id to adjacent\_list.
@@ -107,7 +104,7 @@ In our Graph class, we need to solve two mapping problems, node\_id to Node obje
 
 If the node IDs are small continuous integers, it’s also possible to use array indexing to achieve this purpose, but according to the input json file the IDs are like “HUB” or “D1”, it’s only feasible to use the hash map.
 
-### **2.2.2 Implementation** {#2.2.2-implementation}
+### 2.2.2 Implementation {#2.2.2-implementation}
 
 We used a hash function like this, which is a classic hash function for keys as strings.
 
@@ -119,7 +116,7 @@ Then we defined the number of buckets is 73, because we assume the number of nod
 | class CustomHashMap:   def \_\_init\_\_(self, bucket\_count \= 73):       self.bucket\_count \= bucket\_count       self.table \= \[LinkedList() for \_ in range(bucket\_count)\] |
 | :---- |
 
-### **2.2.3 Complexity** {#2.2.3-complexity}
+### 2.2.3 Complexity {#2.2.3-complexity}
 
 | Function | Average time |
 | :---- | :---- |
@@ -128,9 +125,9 @@ Then we defined the number of buckets is 73, because we assume the number of nod
 | remove | O(1) |
 | items | O(n) |
 
-## **2.3 Min Heap** {#2.3-min-heap}
+## 2.3 Min Heap {#2.3-min-heap}
 
-### **2.3.1 Necessity** {#2.3.1-necessity}
+### 2.3.1 Necessity {#2.3.1-necessity}
 
 A min-heap is necessary to efficiently implement Dijkstra’s algorithm, because it allows extracting the node with the smallest current distance in O(log V) time. Without a min-heap, shortest-path computation would degrade from O((V+E) log V) to O(V2).  
 In our code where the min-heap is actually used:
@@ -140,12 +137,12 @@ In our code where the min-heap is actually used:
 
 Here the priority queue is implemented as min-heap, this priority queue is ordered by energy cost, for every iteration, the algorithm tries to find the smallest total energy so far, among all discovered but unvisited nodes.
 
-### **2.3.2 Implementation** {#2.3.2-implementation}
+### 2.3.2 Implementation {#2.3.2-implementation}
 
 The CustomMinHeap uses a dynamic array (CustomArray) to store the heap elements. Each element in the heap is a tuple: (priority, value). The parent node’s priority is always less than or equal to its children’s priorities, so the smallest priority element is always at the root.  
 The method push adds an element and restores heap order by bubbling up. The method pop removes the smallest element and restores heap order by bubbling down. The heap is stored in a list-like structure (CustomArray) and uses the classic array-based binary heap indexing: Parent: (index \- 1\) // 2; Left child: 2\*index \+ 1; Right child: 2\*index \+ 2\.
 
-### **2.3.3 Complexity** {#2.3.3-complexity}
+### 2.3.3 Complexity {#2.3.3-complexity}
 
 | Method | Content | Time Complexity |
 | :---: | :---: | :---: |
@@ -157,11 +154,11 @@ The method push adds an element and restores heap order by bubbling up. The meth
 | *\_bubble\_down* | Restore heap downwards | O(log n) |
 | *\_swap* | Swap two elements | O(1) |
 
-3. # **Functionality of the tool** {#functionality-of-the-tool}
+3. # Functionality of the tool {#functionality-of-the-tool}
 
-## **3.1 B1: Import and visualize the drone network** {#3.1-b1:-import-and-visualize-the-drone-network}
+## 3.1 B1: Import and visualize the drone network {#3.1-b1:-import-and-visualize-the-drone-network}
 
-**Problem type**  
+**Problem type** 
 This function addresses a graph construction problem, where a drone delivery network is created from a structured input file.
 
 **Modeling decisions**  
@@ -182,7 +179,7 @@ Let V be the number of nodes and E the number of edges:
 * Time complexity: O(V \+ E)  
 * Space complexity: O(V \+ E)
 
-## **3.2 B2: Define no-fly zones** {#3.2-b2:-define-no-fly-zones}
+## 3.2 B2: Define no-fly zones {#3.2-b2:-define-no-fly-zones}
 
 **Problem type**  
 The goal of this function is to mark areas of the drone network where flying is prohibited. These restrictions don’t build the graph. They modify the rules about how the graph can be used. 
@@ -205,7 +202,7 @@ If n elements are listed as restricted:
 * **Time:** O(n), since each restriction is processed once.   
 * **Space:** constant \- only flags change.
 
-## **3.3 B3: Extend or modify the drone network** {#3.3-b3:-extend-or-modify-the-drone-network}
+## 3.3 B3: Extend or modify the drone network {#3.3-b3:-extend-or-modify-the-drone-network}
 
 **Problem type**  
 This function deals with updating an already existing drone network. Instead of building the graph from scratch, the function must safely add new locations and corridors, remove outdated ones, or update properties such as capacity, cost, or restrictions. The main goal is to modify the network without breaking existing connectivity or algorithms that depend on it. 
@@ -236,7 +233,7 @@ Let V be the number of nodes and E the number of edges:
 * **Adding/updating edges:** O(1), adjacency list.  
 * **Space:** O(V \+ E), check every node and edge.
 
-## **3.4 F1: Check reachability** {#3.4-f1:-check-reachability}
+## 3.4 F1: Check reachability {#3.4-f1:-check-reachability}
 
 **Problem type**  
 Its goal is to determine whether all delivery locations in the drone network can be reached from a given hub. The output identifies delivery nodes that are unreachable from the hub, which is critical for validating the feasibility of drone delivery operations.
@@ -277,7 +274,7 @@ Let v be the number of nodes and e the number of edges:
   * Stack: O(v) in the worst case  
   * Graph storage: O(v+e)
 
-## **3.5 F2: Develop a method for determining efficient flight routes** {#3.5-f2:-develop-a-method-for-determining-efficient-flight-routes}
+## 3.5 F2: Develop a method for determining efficient flight routes {#3.5-f2:-develop-a-method-for-determining-efficient-flight-routes}
 
 **Problem type**  
 This function addresses the shortest path problem in a directed weighted graph. The objective is to determine the most energy-efficient flight route from a distribution hub to a single delivery location while avoiding no-fly zones.
@@ -295,7 +292,7 @@ A priority queue implemented using CustomMinHeap is used to always expand the no
 **Complexity analysis**  
 Let V be the number of nodes and E the number of edges. Time complexity is O((V \+ E)logV); space complexity is O(V \+ E).
 
-## **3.6 F3: Compute delivery capacity** {#3.6-f3:-compute-delivery-capacity}
+## 3.6 F3: Compute delivery capacity {#3.6-f3:-compute-delivery-capacity}
 
 **Problem type**  
 This function addresses a maximum flow problem in a directed network. The goal is to compute the maximum number of drones that can be routed simultaneously from a distribution hub to a target urban area under capacity constraints.
@@ -319,7 +316,7 @@ So total time \= (time per BFS) x (number of BFS runs). Firstly we look at the t
 Next we look at the number of BFS runs. Everytime we need to find an augmented path, we need to run BFS once, and everytime we find the augmented path, there is at least one edge going to be saturated. Because the characteristic of BFS is to return the shortest possible path, namely the augmented path’s length can increase from 1 to V-1, as the BFS runs, V is the number of vertices in the map. Each time an edge becomes critical on a shortest path, the BFS distance to its endpoint must strictly increase before it can be critical again. Since distance are at most V-1, this can happen at most O(V) times per edge, and there are E edges, so the total augmentation is O(VE). The two parts combine together and we can draw the conclusion that the complexity of Edmonds-Karp is O(VE2). By contrast, the Ford-Fulkerson using DFS chooses arbitrary paths, not shortest ones; this allows very small flow increases that undo each other via residual edges. Each augmentation increase flow by only 1 unit is possible, which makes the algorithms depend on the numeric value of capacities, and when we represent the capacity using binary, when we input 11, the capacity is actually 1024, so the runtime can be 1024 steps, so to say the runtime is exponential, whereas in Edmonds-Karp, it does not depend on the numeric value of capacities, and limits the number of augmentation by graph structure (V, E).  
 The space complexity is O(V \+ E), due to storage of the residual graph and auxiliary data structures.
 
-## **3.7 F4: Assess and improve network resilience** {#3.7-f4:-assess-and-improve-network-resilience}
+## 3.7 F4: Assess and improve network resilience {#3.7-f4:-assess-and-improve-network-resilience}
 
 **Problem type**  
 This function addresses a minimum cut problem in a directed flow network. The objective is to identify the set of flight corridors whose removal disconnects the distribution hub from the delivery area.
@@ -346,7 +343,7 @@ Total: O(V \+ E)
 Space complexity:  
 O(V \+ E) due to storage of the residual graph and visited structures.
 
-## **3.8 F5: Optimize placement of charging stations for large-scale coverage** {#3.8-f5:-optimize-placement-of-charging-stations-for-large-scale-coverage}
+## 3.8 F5: Optimize placement of charging stations for large-scale coverage {#3.8-f5:-optimize-placement-of-charging-stations-for-large-scale-coverage}
 
 **Problem type**  
 The problem addressed in F5 is an optimization problem focused on facility location or k-medoid problem in the context of drone delivery networks. Specifically, it aims to place k charging stations in the drone network to minimize the average distance from any point in the network to the nearest charging station; ensure that all delivery corridors are sufficiently covered and accessible for drone recharging.  
@@ -368,7 +365,7 @@ For this question, a greedy heuristic algorithm was chosen. The core of the solu
 Time complexity: shortest path computations with Dijkstra’s algorithm run in O(ElogV), where V is the number of nodes and E the number of edges. For placing k charging stations, multiple Dijkstra runs may be required, leading to O(kElogV) in the worst case.  
 Space complexity: storing the graph requires O(V \+ E) space for nodes and edges. 
 
-## **3.9 F6: Set up a communications infrastructure for drones** {#3.9-f6:-set-up-a-communications-infrastructure-for-drones}
+## 3.9 F6: Set up a communications infrastructure for drones {#3.9-f6:-set-up-a-communications-infrastructure-for-drones}
 
 **Problem type**  
 This function addresses the minimum spanning tree (MST) problem in a weighted graph. Its purpose is to connect all reachable locations in the drone with the minimum total energy cost, while respecting no-fly restrictions. The resulting MST represents an energy-efficient backbone network for drone movement. 
