@@ -313,7 +313,101 @@ class Graph:
             edges = self.adj.search(v)
             for e in edges:
                 if not e.restricted and e.v not in visited:
-                    min_heap.push(e.energy, (e.v, e.v))
+                    min_heap.push(e.energy, (v, e.v))
 
 
         return mst, total_cost
+
+    #F5 Charging station placement for Large-Scale Coverage
+    def multi_source_dijkstra(self, sources):
+
+        dist = CustomHashMap()
+        pq = CustomMinHeap()
+
+        # initialize
+        for node_id, _ in self.nodes.items():
+            dist.insert(node_id, float("inf"))
+
+        for s in sources:
+            dist.insert(s, 0)
+            pq.push(0, s)
+
+        while not pq.is_empty():
+            d, u = pq.pop()
+            if d > dist.search(u):
+                continue
+
+            edges = self.adj.search(u)
+            if edges is None:
+                continue
+
+            for e in edges:
+                if e.restricted:
+                    continue
+                v = e.v
+                nd = d + e.energy
+                if nd < dist.search(v):
+                    dist.insert(v, nd)
+                    pq.push(nd, v)
+
+        return dist
+    
+    def find_uncovered_corridors(self, dist, R):
+        uncovered = CustomArray()
+
+        for u, edges in self.adj.items():
+            for e in edges:
+                if e.restricted:
+                    continue
+                du = dist.search(u)
+                dv = dist.search(e.v)
+                if du is None or dv is None:
+                    continue
+                if min(du, dv) > R:
+                    uncovered.append((u, e.v))
+
+        return uncovered
+
+    def optimize_charging_station_placement(self, k, R):
+        # 1. collect existing charging stations
+        charging = CustomArray()
+        for node_id, node in self.nodes.items():
+            if node.type == "charging":
+                charging.append(node_id)
+
+        # 2. greedy placement
+        for _ in range(k):
+            # compute distances
+            dist = self.multi_source_dijkstra(charging)
+
+            # check uncovered corridors
+            uncovered = self.find_uncovered_corridors(dist, R)
+
+            candidate = None
+            max_dist = -1
+
+            if len(uncovered) > 0:
+                # PRIORITY: fix uncovered corridors
+                for (u, v) in uncovered:
+                    if dist.search(u) > max_dist:
+                        max_dist = dist.search(u)
+                        candidate = u
+                    if dist.search(v) > max_dist:
+                        max_dist = dist.search(v)
+                        candidate = v
+            else:
+                # minimize average distance → pick farthest node
+                for node_id, _ in self.nodes.items():
+                    d = dist.search(node_id)
+                    if d > max_dist:
+                        max_dist = d
+                        candidate = node_id
+
+            if candidate is None:
+                break
+
+            charging.append(candidate)
+
+        return charging
+            
+                
