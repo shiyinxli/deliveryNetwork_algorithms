@@ -114,7 +114,7 @@ class Graph:
         if unreachable_delivery.head is None:
             return f"All delivery nodes are reasonable from {start}."
         
-        names = LinkedList()
+        names = []
         current = unreachable_delivery.head
         while current:
             names.append(current.data)
@@ -125,30 +125,41 @@ class Graph:
     # F2: Shortest path (Dijkstra using energy)
     def dijkstra(self, start, target):
         pq = CustomMinHeap()
-        pq.push(0, (start, []))  # (cost, (current_node, path_so_far))
+        pq.push(0, start)
 
         visited = set()
+        prev = CustomHashMap()
+        dist = CustomHashMap()
+        dist.insert(start, 0)
 
         while not pq.is_empty():
-            cost, (u, path) = pq.pop()
+            cost, u = pq.pop()
             if u in visited:
                 continue
             visited.add(u)
 
-            path = path + [u]
-
             if u == target:
+                path = []
+                cur = target
+                while cur is not None:
+                    path.append(cur)
+                    cur = prev.search(cur)
+                path.reverse()
                 return cost, path
-
+            
             edges = self.adj.search(u)
             if edges is None:
                 continue
 
             for e in edges:
                 if not e.restricted:
-                    pq.push(cost + e.energy, (e.v, path))
-
-        return float("inf"), []  # no path
+                    old_cost = dist.search(e.v)
+                    new_cost = cost + e.energy
+                    if old_cost is None or new_cost < old_cost:
+                        dist.insert(e.v, new_cost)
+                        prev.insert(e.v, u)
+                        pq.push(new_cost, e.v)
+        return float("inf"), []
     
     # F3: calculate max-flow
     def _ensure_map(self, cmap, key):

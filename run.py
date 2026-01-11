@@ -3,16 +3,15 @@ if __name__ == "__main__":
     graph = Graph()
     graph.load_json("test.json")
 
-    # Check delivery reachability from HUB
-    # result = graph.check_delivery_reachability("HUB")
-    # print(result)
+    result = graph.check_delivery_reachability("S")
+    print(result)
 
-    #Example shortest path from HUB to A1
-    # cost, path = graph.dijkstra("HUB", "A1")
-    # if path:
-    #     print(f"Shortest path from HUB to A1 costs {cost} energy and goes: {' -> '.join(path)}")
-    # else:
-    #     print("No path found from HUB to A1")
+    
+    cost, path = graph.dijkstra("S", "D")
+    if path:
+        print(f"Shortest path from S to charge costs {cost} energy and goes: {' -> '.join(path)}")
+    else:
+        print("No path found from S to charge")
     
     # urban_area = ["A", "B", "C", "D"]
     # capacity, residual = graph.calculate_delivery_capacity("S", urban_area)
@@ -29,7 +28,7 @@ if __name__ == "__main__":
     # for (u, v, cost) in mst.iter():
     #     print(u, v, cost)
     
-    stations = graph.optimize_charging_station_placement(k = 2, R = 5)
-    for i in range(len(stations)):
-        u = stations[i]
-        print(f"{u}")
+    # stations = graph.optimize_charging_station_placement(k = 2, R = 5)
+    # for i in range(len(stations)):
+    #     u = stations[i]
+    #     print(f"{u}")
