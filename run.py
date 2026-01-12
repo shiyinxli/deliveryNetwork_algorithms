@@ -3,6 +3,8 @@ if __name__ == "__main__":
     graph = Graph()
     graph.load_json("test.json")
 
+    graph.visualize_graph()
+
     result = graph.check_delivery_reachability("S")
     print(result)
 
@@ -12,6 +14,7 @@ if __name__ == "__main__":
         print(f"Shortest path from S to charge costs {cost} energy and goes: {' -> '.join(path)}")
     else:
         print("No path found from S to charge")
+
     
     # urban_area = ["A", "B", "C", "D"]
     # capacity, residual = graph.calculate_delivery_capacity("S", urban_area)

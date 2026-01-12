@@ -1,5 +1,7 @@
 import json
 import heapq
+import networkx as nx
+import matplotlib.pyplot as plt
 from data_structure import CustomHashMap, LinkedList, CustomArray, CustomMinHeap
 
 class Node:
@@ -431,5 +433,38 @@ class Graph:
             charging.append(candidate)
 
         return charging
+    
+    def visualize_graph(self):
+        G = nx.DiGraph()
+
+        # add nodes
+        for node_id, node in self.nodes.items():
+            G.add_node(node_id, label=node.type)
+
+        # add edges
+        for u, edge_list in self.adj.items():
+            for edge in edge_list:
+                label = f"E:{edge.energy} C:{edge.capacity}"
+                G.add_edge(edge.u, edge.v, label=label)
+
+                if edge.bidirectional:
+                    G.add_edge(edge.v, edge.u, label=label)
+
+        pos = nx.spring_layout(G, seed=42)
+
+        # draw nodes
+        nx.draw(
+            G, pos,
+            with_labels=True,
+            node_size=2500,
+            font_size=10
+        )
+
+        # draw edge labels
+        edge_labels = nx.get_edge_attributes(G, "label")
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+        plt.title("Delivery Network Map")
+        plt.show()
             
                 
