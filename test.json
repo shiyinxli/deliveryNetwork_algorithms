@@ -14,14 +14,14 @@
         "to": "A",
         "energy": 15,
         "capacity": 10,
-        "bidirectional": false
+        "bidirectional": true
     },
     {
         "from": "S",
         "to": "B",
         "energy": 5,
         "capacity": 8,
-        "bidirectional": false
+        "bidirectional": true
     },
     {
         "from": "B",
@@ -35,7 +35,7 @@
         "to": "C",
         "energy": 4,
         "capacity": 5,
-        "bidirectional": false
+        "bidirectional": true
     },
     {
         "from": "A",

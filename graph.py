@@ -1,5 +1,4 @@
 import json
-import heapq
 import networkx as nx
 import matplotlib.pyplot as plt
 from data_structure import CustomHashMap, LinkedList, CustomArray, CustomMinHeap
@@ -114,7 +113,7 @@ class Graph:
             current = current.next
 
         if unreachable_delivery.head is None:
-            return f"All delivery nodes are reasonable from {start}."
+            return f"All delivery nodes are reachable from {start}."
         
         names = []
         current = unreachable_delivery.head
@@ -271,7 +270,7 @@ class Graph:
 
         return max_flow, residual
     
-    # F4: min-cut
+    # F4: bottle-neck
     def _extract_min_cut(self, residual, source):
         # BFS to find reachable nodes in residual graph
         visited = CustomHashMap()
