@@ -1,7 +1,7 @@
 # Algorithms and Data Structures Project Report
 
-Team members: Jou-Pei Fang (Matr. No. 2285577\)
-		          Shiyin Li (Matr. No. 2280709\)
+Team members: Jou-Pei Fang
+		          Shiyin Li 
 
 [1. Introduction](#1-introduction)
 
